@@ -14,41 +14,28 @@
 
         <!-- Display Input -->
         <input id="display" type="text" name="expr" value="{{ expr }}" placeholder="Masukkan ekspresi logika..."
-            class="display-box" autocomplete="off">
+            class="display-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            inputmode="text">
 
         <!-- Form dengan tombol operator -->
         <form method="POST" class="grid" id="calcForm">
             <input type="hidden" id="hiddenExpr" name="expr" value="{{ expr }}">
 
-            <!-- Baris 1: Operator Logika Dasar -->
+            <!-- Baris 1: Operator Khusus -->
+            <button type="button" onclick="clearDisplay()" class="btn grey" title="Clear semua">
+                AC<span>Clear</span>
+            </button>
             <button type="button" onclick="add('~')" class="btn grey" title="Negasi / NOT">
                 ~<span>NOT</span>
             </button>
-            <button type="button" onclick="add('∧')" class="btn grey" title="Konjungsi / AND">
-                ∧<span>AND</span>
-            </button>
-            <button type="button" onclick="add('∨')" class="btn grey" title="Disjungsi / OR">
-                ∨<span>OR</span>
-            </button>
-            <button type="button" onclick="add('⊕')" class="btn grey" title="XOR / Exclusive OR">
+            <button type="button" onclick="add('⊕')" class="btn grey" title="XOR">
                 ⊕<span>XOR</span>
             </button>
-
-            <!-- Baris 2: Operator Implikasi -->
-            <button type="button" onclick="add('→')" class="btn blue" title="Implikasi">
-                →<span>Implikasi</span>
-            </button>
-            <button type="button" onclick="add('↔')" class="btn blue" title="Bi-implikasi / Equivalence">
-                ↔<span>Bi-implikasi</span>
-            </button>
-            <button type="button" onclick="add('(')" class="btn grey" title="Kurung Buka">
-                (<span>Buka</span>
-            </button>
-            <button type="button" onclick="add(')')" class="btn grey" title="Kurung Tutup">
-                )<span>Tutup</span>
+            <button type="button" onclick="add('∧')" class="btn blue" title="AND">
+                ∧<span>AND</span>
             </button>
 
-            <!-- Baris 3: Variabel -->
+            <!-- Baris 2: Variabel & Operator -->
             <button type="button" onclick="add('P')" class="btn red" title="Variabel P">
                 P<span>Var</span>
             </button>
@@ -58,22 +45,47 @@
             <button type="button" onclick="add('R')" class="btn red" title="Variabel R">
                 R<span>Var</span>
             </button>
+            <button type="button" onclick="add('∨')" class="btn blue" title="OR">
+                ∨<span>OR</span>
+            </button>
+
+            <!-- Baris 3: Variabel & Operator -->
             <button type="button" onclick="add('S')" class="btn red" title="Variabel S">
                 S<span>Var</span>
             </button>
-
-            <!-- Baris 4: Kontrol -->
-            <button type="button" onclick="addSpace()" class="btn grey" title="Tambah Spasi untuk multiple expressions">
-                Space<span>Pisah</span>
+            <button type="button" onclick="add('(')" class="btn red" title="Kurung Buka">
+                (<span>Buka</span>
             </button>
-            <button type="button" onclick="backspace()" class="btn darkred" title="Hapus 1 karakter">
+            <button type="button" onclick="add(')')" class="btn red" title="Kurung Tutup">
+                )<span>Tutup</span>
+            </button>
+            <button type="button" onclick="add('→')" class="btn blue" title="Implikasi">
+                →<span>→</span>
+            </button>
+
+            <!-- Baris 4: Space & Control -->
+            <button type="button" onclick="add('↔')" class="btn red" title="Bi-implikasi">
+                ↔<span>↔</span>
+            </button>
+            <button type="button" onclick="addSpace()" class="btn red" title="Spasi">
+                Spc<span>Space</span>
+            </button>
+            <button type="button" onclick="backspace()" class="btn red" title="Delete">
                 ⌫<span>Del</span>
             </button>
-            <button type="button" onclick="clearDisplay()" class="btn darkred" title="Clear semua">
-                AC<span>Clear</span>
+            <button type="button" onclick="add('+')" class="btn blue" title="Plus">
+                +<span>Add</span>
             </button>
-            <button type="submit" class="btn blue equal" title="Hitung Tabel Kebenaran">
+
+            <!-- Baris 5: Equal Button -->
+            <button type="button" onclick="add('0')" class="btn red" title="Zero">
+                0<span>Nol</span>
+            </button>
+            <button type="submit" class="btn equal" title="Hitung Tabel Kebenaran">
                 =<span>Hitung</span>
+            </button>
+            <button type="button" onclick="add('-')" class="btn blue" title="Minus">
+                -<span>Min</span>
             </button>
         </form>
 
@@ -97,7 +109,7 @@
         <!-- Tabel Kebenaran -->
         {% if table %}
         <div class="table-wrap">
-            <h3>Tabel Kebenaran</h3>
+            <h3>📊 Tabel Kebenaran</h3>
             <div class="table-container">
                 <table>
                     <thead>
@@ -129,9 +141,19 @@
                 </table>
             </div>
 
-        
+            <!-- Info Jumlah Kombinasi -->
+            <p class="table-info">
+                Total kombinasi: <strong>{{ table|length }}</strong> baris
+                ({{ vars|length }} variabel = 2<sup>{{ vars|length }}</sup> kemungkinan)
+            </p>
         </div>
         {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>💡 <strong>Tips:</strong> B = Benar (True), S = Salah (False)</p>
+        </div>
+    </div>
 
     <script>
         // Ambil elemen display
