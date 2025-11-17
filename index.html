@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Calculator - Kalkulator Tabel Kebenaran</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="calculator">
+        <h1>Kalkulator Logika</h1>
+
+        <!-- Display Input -->
+        <input id="display" type="text" name="expr" value="{{ expr }}" placeholder="Masukkan ekspresi logika..."
+            class="display-box" autocomplete="off">
+
+        <!-- Form dengan tombol operator -->
+        <form method="POST" class="grid" id="calcForm">
+            <input type="hidden" id="hiddenExpr" name="expr" value="{{ expr }}">
+
+            <!-- Baris 1: Operator Logika Dasar -->
+            <button type="button" onclick="add('~')" class="btn grey" title="Negasi / NOT">
+                ~<span>NOT</span>
+            </button>
+            <button type="button" onclick="add('∧')" class="btn grey" title="Konjungsi / AND">
+                ∧<span>AND</span>
+            </button>
+            <button type="button" onclick="add('∨')" class="btn grey" title="Disjungsi / OR">
+                ∨<span>OR</span>
+            </button>
+            <button type="button" onclick="add('⊕')" class="btn grey" title="XOR / Exclusive OR">
+                ⊕<span>XOR</span>
+            </button>
+
+            <!-- Baris 2: Operator Implikasi -->
+            <button type="button" onclick="add('→')" class="btn blue" title="Implikasi">
+                →<span>Implikasi</span>
+            </button>
+            <button type="button" onclick="add('↔')" class="btn blue" title="Bi-implikasi / Equivalence">
+                ↔<span>Bi-implikasi</span>
+            </button>
+            <button type="button" onclick="add('(')" class="btn grey" title="Kurung Buka">
+                (<span>Buka</span>
+            </button>
+            <button type="button" onclick="add(')')" class="btn grey" title="Kurung Tutup">
+                )<span>Tutup</span>
+            </button>
+
+            <!-- Baris 3: Variabel -->
+            <button type="button" onclick="add('P')" class="btn red" title="Variabel P">
+                P<span>Var</span>
+            </button>
+            <button type="button" onclick="add('Q')" class="btn red" title="Variabel Q">
+                Q<span>Var</span>
+            </button>
+            <button type="button" onclick="add('R')" class="btn red" title="Variabel R">
+                R<span>Var</span>
+            </button>
+            <button type="button" onclick="add('S')" class="btn red" title="Variabel S">
+                S<span>Var</span>
+            </button>
+
+            <!-- Baris 4: Kontrol -->
+            <button type="button" onclick="addSpace()" class="btn grey" title="Tambah Spasi untuk multiple expressions">
+                Space<span>Pisah</span>
+            </button>
+            <button type="button" onclick="backspace()" class="btn darkred" title="Hapus 1 karakter">
+                ⌫<span>Del</span>
+            </button>
+            <button type="button" onclick="clearDisplay()" class="btn darkred" title="Clear semua">
+                AC<span>Clear</span>
+            </button>
+            <button type="submit" class="btn blue equal" title="Hitung Tabel Kebenaran">
+                =<span>Hitung</span>
+            </button>
+        </form>
+
+        <!-- Panduan Penggunaan -->
+        <div class="help-box">
+            <details>
+                <summary>📖 Panduan Penggunaan</summary>
+                <ul>
+                    <li><strong>Operator:</strong> ~ (NOT), ∧ (AND), ∨ (OR), ⊕ (XOR), → (Implikasi), ↔ (Bi-implikasi)
+                    </li>
+                    <li><strong>Variabel:</strong> Gunakan huruf kapital A-Z (P, Q, R, S, dll.)</li>
+                    <li><strong>Multiple ekspresi:</strong> Pisahkan dengan spasi (contoh: <code>P∧Q P∨Q</code>)</li>
+                    <li><strong>Kurung:</strong> Gunakan ( ) untuk prioritas operator</li>
+                    <li><strong>NAND:</strong> Gunakan format <code>P~Q</code> untuk NOT(P AND Q)</li>
+                </ul>
+                <p><strong>Contoh:</strong></p>
+                <code>P→Q (P∧Q)→R ~(P∨Q)</code>
+            </details>
+        </div>
+
+        <!-- Tabel Kebenaran -->
+        {% if table %}
+        <div class="table-wrap">
+            <h3>Tabel Kebenaran</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for v in vars %}
+                            <th class="var-col">{{ v }}</th>
+                            {% endfor %}
+                            {% for expr in expressions %}
+                            <th class="expr-col">{{ expr }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table %}
+                        <tr>
+                            {% for v in vars %}
+                            <td class="{{ 'benar' if row[v]=='B' else 'salah' }}">
+                                {{ row[v] }}
+                            </td>
+                            {% endfor %}
+                            {% for expr in expressions %}
+                            <td class="{{ 'benar' if row[expr]=='B' else 'salah' }}">
+                                {{ row[expr] }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        
+        </div>
+        {% endif %}
+
+    <script>
+        // Ambil elemen display
+        const display = document.getElementById("display");
+        const hiddenExpr = document.getElementById("hiddenExpr");
+
+        // Fungsi tambah karakter
+        function add(x) {
+            display.value += x;
+            hiddenExpr.value = display.value;
+            display.focus();
+        }
+
+        // Fungsi tambah spasi (untuk multiple expressions)
+        function addSpace() {
+            if (display.value && !display.value.endsWith(' ')) {
+                display.value += ' ';
+                hiddenExpr.value = display.value;
+            }
+            display.focus();
+        }
+
+        // Fungsi backspace
+        function backspace() {
+            display.value = display.value.slice(0, -1);
+            hiddenExpr.value = display.value;
+            display.focus();
+        }
+
+        // Fungsi clear
+        function clearDisplay() {
+            display.value = "";
+            hiddenExpr.value = "";
+            display.focus();
+        }
+
+        // Update hidden input saat user mengetik manual di display
+        display.addEventListener('input', function () {
+            hiddenExpr.value = this.value;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Enter untuk submit
+            if (e.key === 'Enter' && display.value.trim()) {
+                document.getElementById('calcForm').submit();
+            }
+            // Escape untuk clear
+            if (e.key === 'Escape') {
+                clearDisplay();
+            }
+        });
+
+        // Auto-focus ke display saat halaman load
+        window.addEventListener('load', function () {
+            display.focus();
+        });
+    </script>
+</body>
+
+</html>
