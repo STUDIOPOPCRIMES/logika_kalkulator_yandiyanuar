@@ -47,10 +47,6 @@ body {
     color: #2c3e50;
     margin-bottom: 20px;
     text-align: center;
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 /* DISPLAY BOX */
@@ -70,9 +66,6 @@ body {
     transition: all 0.3s ease;
     cursor: text;
     letter-spacing: 2px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
 }
 
 .display-box:focus {
@@ -163,6 +156,11 @@ body {
     color: #fff;
 }
 
+.purple {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: #fff;
+}
+
 .darkred {
     background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
     color: #fff;
@@ -170,7 +168,7 @@ body {
 
 .equal {
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-    grid-column: span 4;
+    grid-column: span 3;
     font-size: 28px;
     height: 65px;
 }
@@ -467,4 +465,6 @@ tr:hover td.salah {
         background: #1e1e2e;
         color: #ddd;
     }
+
+    
 }
